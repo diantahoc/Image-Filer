@@ -1,0 +1,19 @@
+################################
+## Vim-related stuff, scripts,
+## compiled binaries.
+################################
+*~
+*.swp
+*.bat
+*.sh
+*.exe
+
+############
+## Windows
+############
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
