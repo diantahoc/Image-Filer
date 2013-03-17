@@ -30,7 +30,7 @@ static char *tolowers(const char *str)
  	if(!str)
 		return NULL;	
 	
-	n = strlen(str);
+	n = strlen(str)+1;
 	res = malloc(n);
 
 	for(i=0;i<n;++i)
@@ -273,7 +273,7 @@ static int parse_params(struct params_t *params, int argc, char **argv)
 		return 1;
 	}
 
-	params->help = 0;
+	params->decode = params->help = 0;
 
 	if(argc < 3)
 		return 0;
