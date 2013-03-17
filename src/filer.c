@@ -64,13 +64,13 @@ static size_t load_file(unsigned char **_into, const char *filename)
 	ArrList *iter;
 	size_t size, chunk;
 
-	if(!result)
+	if(!_into)
 		return 0;
 
 	f = fopen(filename, "rb");
 
 	if(!f) {
-		*result = NULL;
+		*_into = NULL;
 		return 0;
 	}
 
@@ -133,9 +133,9 @@ static size_t to_pixels(unsigned char **_out, size_t *_w, size_t *_h,
 		const unsigned char *data, size_t len)
 {
 	unsigned char *out;
-	size_t off, outlen;
+	size_t off, outlen, w, h;
 
-	find_dimensions(len + sizeof(size_t), 4, &w, &h);
+	find_dimensions(&w, &h, len + sizeof(size_t), 4);
 	outlen = w * h * 4;
 
 	out = malloc(outlen);
