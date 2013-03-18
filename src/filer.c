@@ -79,7 +79,6 @@ static size_t load_file(unsigned char **_into, const char *filename)
 	 * been filled completely.
 	 */
 	iter = buf = arrlist_create(bufsize);
-	size = 0;
 
 	do {
 		if(iter->written == iter->size) {
@@ -88,7 +87,6 @@ static size_t load_file(unsigned char **_into, const char *filename)
 		}
 
 		chunk = fread(iter->data, 1, bufsize, f);
-		size += chunk;
 		iter->written += chunk;
 	} while(chunk);
 
