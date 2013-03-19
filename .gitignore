@@ -1,11 +1,12 @@
 ################################
 ## Vim-related stuff, scripts,
-## compiled binaries.
+## compiled binaries, etc.
 ################################
 *~
 *.swp
 *.bat
 *.sh
+*.o
 *.exe
 
 ############
