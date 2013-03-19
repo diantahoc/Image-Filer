@@ -1,11 +1,13 @@
+#include <ctype.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "arrlist.h"
 #define LODEPNG_NO_COMPILE_ANCILLARY_CHUNKS
 #include "lodepng.h"
+
+#include "arrlist.h"
 
 /*
  * Contains the file names to operate on and all flags that steer behaviour.
@@ -101,8 +103,7 @@ static size_t load_file(unsigned char **_into, const char *filename)
  * Calculates the dimensions of an almost square-shaped image able to store at
  * least len bytes of data when constructed with the given bytes per pixel.
  */
-static void find_dimensions(size_t *_w, size_t *_h,
-		size_t len, size_t bpp)
+static void find_dimensions(size_t *_w, size_t *_h, size_t len, size_t bpp)
 {
 	size_t w, h;
 
@@ -116,7 +117,6 @@ static void find_dimensions(size_t *_w, size_t *_h,
 			++h;
 		else
 			++w;
-
 	*_w = w;
 	*_h = h;
 }
@@ -124,8 +124,8 @@ static void find_dimensions(size_t *_w, size_t *_h,
 #define COPY(X, S) memcpy(out + off, X, S); off += S;
 
 /*
- * Converts raw data to an image, stores its data in the first three parameters,
- * and returns its size in memory.
+ * Converts raw data to an image, stores its data and dimensions in the first
+ * three parameters, and returns its size in memory.
  */
 static size_t to_pixels(unsigned char **_out, size_t *_w, size_t *_h,
 		const unsigned char *data, size_t len)
@@ -152,8 +152,7 @@ static size_t to_pixels(unsigned char **_out, size_t *_w, size_t *_h,
 /*
  * Converts encoded image data to raw data.
  */
-static size_t to_data(unsigned char **_out, const unsigned char *pixels,
-		size_t len)
+static size_t to_data(unsigned char **_out, const unsigned char *pixels)
 {
 	unsigned char *out;
 	size_t outlen;
@@ -169,17 +168,17 @@ static size_t to_data(unsigned char **_out, const unsigned char *pixels,
 /*
  * Transforms an encoded PNG file into the raw data it contains.
  */
-static int decode(unsigned char **result, size_t *reslen, const char *srcname)
+static int decode(unsigned char **_result, size_t *reslen, const char *srcname)
 {
-	size_t w, h;
 	unsigned char *img;
+	size_t w, h;
 
 	if(lodepng_decode32_file(&img, &w, &h, srcname)) {
 		printf("Failed to open source picture %s.\n", srcname);
 		return 0;
 	}
 
-	*reslen = to_data(result, img, w*h);
+	*reslen = to_data(_result, img);
 	free(img);
 	return 1;
 }
@@ -187,11 +186,11 @@ static int decode(unsigned char **result, size_t *reslen, const char *srcname)
 /*
  * Transforms a file into pixel data that can then be written to a PNG file.
  */
-static int encode(unsigned char **result, size_t *reslen, const char *srcname)
+static int encode(unsigned char **_result, size_t *_reslen, const char *srcname)
 {
 	unsigned char *src;
 	unsigned char *img;
-	size_t imglen, srclen, w, h;
+	size_t srclen, w, h;
 	unsigned errorcode;
 
 	srclen = load_file(&src, srcname);
@@ -201,9 +200,9 @@ static int encode(unsigned char **result, size_t *reslen, const char *srcname)
 		goto error;
 	}
 
-	imglen = to_pixels(&img, &w, &h, src, srclen);
+	to_pixels(&img, &w, &h, src, srclen);
 	free(src);
-	errorcode = lodepng_encode32(result, reslen, img, w, h);
+	errorcode = lodepng_encode32(_result, _reslen, img, w, h);
 	free(img);
 
 	if(errorcode) {
@@ -214,8 +213,8 @@ static int encode(unsigned char **result, size_t *reslen, const char *srcname)
 
 	return 1;
 error:
-	*result = NULL;
-	*reslen = 0;
+	*_result = NULL;
+	*_reslen = 0;
 	return 0;
 }
 
@@ -228,7 +227,7 @@ int main(int argc, char *argv[])
 {
 	struct params_t params;
 	unsigned char *result;
-	size_t reslen, w, h;
+	size_t reslen;
 
 	if(!parse_params(&params, argc, argv)) {
 		printf("Not enough arguments. Type filer --help for info.\n");
@@ -258,8 +257,8 @@ int main(int argc, char *argv[])
  */
 static int parse_params(struct params_t *params, int argc, char **argv)
 {
-	int i, len;
 	char *str;
+	int len;
 
 	if(!params || argc < 2)
 		return 0;
