@@ -12,6 +12,6 @@ Installing in GNU/Linux
 ===============
 
 Enter the src directory in terminal, and do the following :
-* Run `make'
+* Run `make`
 * Mark `filer` as an executable by running `chmod +x filer`
 * Move filer to /bin by running `mv filer /bin`
