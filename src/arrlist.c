@@ -5,8 +5,8 @@ ArrList *arrlist_create(size_t size)
 {
 	ArrList *al;
        
-	al = malloc(sizeof(ArrList));
-	al->data = malloc(size);
+	al = (ArrList*) malloc(sizeof(ArrList));
+	al->data = (unsigned char*)malloc(size);
 	al->size = size;
 	al->written = 0;
 	al->next = NULL;
@@ -42,7 +42,7 @@ size_t arrlist_linear(ArrList *al, unsigned char **out)
 	for(iter = al;iter;iter = iter->next)
 		size += iter->written;
 	
-	result = malloc(size);
+	result = (unsigned char*)malloc(size);
 	i = 0;
 
 	for(iter = al;iter;iter = iter->next) {

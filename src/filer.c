@@ -33,7 +33,7 @@ static char *tolowers(const char *str)
 		return NULL;	
 	
 	n = strlen(str)+1;
-	res = malloc(n);
+	res = (char*)malloc(n);
 
 	for(i=0;i<n;++i)
 		res[i] = tolower(str[i]);
@@ -136,7 +136,7 @@ static size_t to_pixels(unsigned char **_out, size_t *_w, size_t *_h,
 	find_dimensions(&w, &h, len + sizeof(size_t), 4);
 	outlen = w * h * 4;
 
-	out = malloc(outlen);
+	out = (unsigned char*)malloc(outlen);
 	off = 0;
 
 	COPY(&len, sizeof(size_t));		/* PL size */
@@ -158,7 +158,7 @@ static size_t to_data(unsigned char **_out, const unsigned char *pixels)
 	size_t outlen;
 
 	outlen = *((size_t*)pixels);
-	out = malloc(outlen);
+	out = (unsigned char*)malloc(outlen);
 	memcpy(out, pixels + sizeof(size_t), outlen);
 
 	*_out = out;
